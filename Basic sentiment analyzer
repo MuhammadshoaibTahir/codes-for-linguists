@@ -1,0 +1,74 @@
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
+
+# Make sure you have the VADER lexicon downloaded
+nltk.download('vader_lexicon')
+
+# Initialize sentiment analyzer
+sia = SentimentIntensityAnalyzer()
+
+# Main app window
+class SentimentAnalyzerApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Sentiment Analyzer")
+
+        # Textbox for input
+        self.textbox = tk.Text(root, height=15, width=60)
+        self.textbox.pack(pady=10)
+
+        # Frame for buttons
+        button_frame = tk.Frame(root)
+        button_frame.pack()
+
+        self.load_button = tk.Button(button_frame, text="Load Text File", command=self.load_text_file)
+        self.load_button.grid(row=0, column=0, padx=5)
+
+        self.analyze_button = tk.Button(button_frame, text="Analyze Sentiment", command=self.analyze_sentiment)
+        self.analyze_button.grid(row=0, column=1, padx=5)
+
+        self.clear_button = tk.Button(button_frame, text="Clear", command=self.clear_text)
+        self.clear_button.grid(row=0, column=2, padx=5)
+
+        # Label for output
+        self.result_label = tk.Label(root, text="Sentiment Score & Features will appear here", justify="left", font=("Arial", 12))
+        self.result_label.pack(pady=10)
+
+    def load_text_file(self):
+        filepath = filedialog.askopenfilename(
+            filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+        )
+        if filepath:
+            with open(filepath, "r", encoding="utf-8") as file:
+                text = file.read()
+                self.textbox.delete("1.0", tk.END)
+                self.textbox.insert(tk.END, text)
+
+    def analyze_sentiment(self):
+        text = self.textbox.get("1.0", tk.END).strip()
+        if not text:
+            messagebox.showwarning("Input Error", "Please enter some text or load a file.")
+            return
+
+        # Get sentiment scores
+        scores = sia.polarity_scores(text)
+        output = f"Sentiment Analysis Results:\n\n"
+        output += f"Positive: {scores['pos']}\n"
+        output += f"Neutral : {scores['neu']}\n"
+        output += f"Negative: {scores['neg']}\n"
+        output += f"Overall Compound Score: {scores['compound']}\n"
+
+        # Display results
+        self.result_label.config(text=output)
+
+    def clear_text(self):
+        self.textbox.delete("1.0", tk.END)
+        self.result_label.config(text="Sentiment Score & Features will appear here")
+
+# Create and run the app
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = SentimentAnalyzerApp(root)
+    root.mainloop()
