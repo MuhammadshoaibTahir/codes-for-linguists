@@ -1,0 +1,149 @@
+------------------------------------
+#NLTK
+------------------------------------
+
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk import pos_tag
+
+# Ensure that necessary NLTK data is downloaded
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
+# Text to tag
+text = "I love programming in Python."
+
+# Tokenize and tag POS
+tokens = word_tokenize(text)
+tagged = pos_tag(tokens)
+
+# Print tagged output
+print(tagged)
+
+------------------------------------
+SpaCy
+------------------------------------
+
+import spacy
+
+# Load the spaCy model
+nlp = spacy.load("en_core_web_sm")
+
+# Text to tag
+text = "I love programming in Python."
+
+# Process the text
+doc = nlp(text)
+
+# Extract and print POS tags
+tagged = [(token.text, token.pos_) for token in doc]
+print(tagged)
+
+
+------------------------------------
+Textblob
+------------------------------------
+from textblob import TextBlob
+
+# Text to tag
+text = "I love programming in Python."
+
+# Create a TextBlob object and get the tags
+blob = TextBlob(text)
+tagged = blob.tags
+
+# Print tagged output
+print(tagged)
+
+
+------------------------------------
+StanfordNLP
+------------------------------------
+
+import stanza
+
+# Download the English model
+stanza.download('en')
+
+# Initialize the Stanza pipeline
+nlp = stanza.Pipeline('en')
+
+# Text to tag
+text = "I love programming in Python."
+
+# Process the text
+doc = nlp(text)
+
+# Extract and print POS tags
+tagged = [(word.text, word.upos) for word in doc.words]
+print(tagged)
+
+------------------------------------
+AllenNLP
+------------------------------------
+
+from allennlp.predictors.predictor import Predictor
+
+# Load the POS tagger model from AllenNLP
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/pos-tagger-2020.02.10.tar.gz")
+
+# Text to tag
+text = "I love programming in Python."
+
+# Get POS tags
+result = predictor.predict(sentence=text)
+
+# Print tagged output
+tagged = list(zip(result['words'], result['tags']))
+print(tagged)
+
+------------------------------------
+Pattern
+------------------------------------
+
+from pattern.en import parsetree
+
+# Text to tag
+text = "I love programming in Python."
+
+# Parse the sentence and extract POS tags
+tree = parsetree(text)
+
+# Print tagged output
+tagged = [(word.string, word.tag) for word in tree]
+print(tagged)
+
+------------------------------------
+Transformers (Huggingface)
+------------------------------------
+from transformers import pipeline
+
+# Load the pipeline for POS tagging (use a pre-trained model)
+nlp = pipeline("ner", model="dbmdz/bert-large-cased-finetuned-conll03-english")
+
+# Text to tag
+text = "I love programming in Python."
+
+# Get POS tags (Note: Hugging Face does NER but can be adapted for POS tagging)
+tagged = nlp(text)
+print(tagged)
+
+------------------------------------
+Flair
+------------------------------------
+
+from flair.data import Sentence
+from flair.models import SequenceTagger
+
+# Load the POS tagger model from Flair
+tagger = SequenceTagger.load("flair/pos-english")
+
+# Text to tag
+sentence = Sentence("I love programming in Python.")
+
+# Get POS tags
+tagger.predict(sentence)
+
+# Extract and print POS tags
+tagged = [(word.text, word.get_tag('pos').value) for word in sentence]
+print(tagged)
