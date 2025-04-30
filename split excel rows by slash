@@ -1,0 +1,35 @@
+import pandas as pd
+
+# Input and Output files
+input_file = "input file location"
+output_file = "output location"
+
+# Load data
+df = pd.read_excel(input_file)
+
+# List to store new expanded rows
+new_rows = []
+
+# Loop through original dataframe rows
+for _, row in df.iterrows():
+    concepts = str(row['CONCEPT/GLOSS']).split('/')
+    sentences = str(row['SENTENCES']).split('/')
+    max_len = max(len(concepts), len(sentences))
+
+    for i in range(max_len):
+        new_row = row.copy()
+        new_row['CONCEPT/GLOSS'] = concepts[i].strip() if i < len(concepts) else ''
+        new_row['SENTENCES'] = sentences[i].strip() if i < len(sentences) else ''
+
+        # Empty all other columns if not the first row of this group
+        if i > 0:
+            for col in df.columns[:-2]:  # All columns except last two
+                new_row[col] = ''
+        new_rows.append(new_row)
+
+# Create final dataframe
+final_df = pd.DataFrame(new_rows)
+
+# Save to Excel
+final_df.to_excel(output_file, index=False)
+print("✅ File saved to:", output_file)
